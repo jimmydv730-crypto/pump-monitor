@@ -59,12 +59,15 @@ async function getGraduatedCoins() {
 }
 
 async function processCoins() {
+    console.log("START processCoins");
   console.log(
     "Checking graduations:",
     new Date().toLocaleTimeString()
 );
 
     const coins = await getGraduatedCoins();
+
+console.log("END getGraduatedCoins");
     console.log("Coins returned:", coins.length);
 
     for (const coin of coins) {
@@ -148,12 +151,24 @@ await sendAlert(msg);
 
 console.log("Monitoring graduations...");
 
-processCoins();
+async function loop() {
 
-setInterval(
-    processCoins,
-    150000
-);
+    try {
+        await processCoins();
+    } catch (err) {
+        console.error(
+            "Loop error:",
+            err
+        );
+    }
+
+    setTimeout(
+        loop,
+        150000
+    );
+}
+
+loop();
 
 setInterval(() => {
     console.log(
