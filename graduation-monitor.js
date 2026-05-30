@@ -33,6 +33,10 @@ const sendAlert = require("./alert");
 const API_KEY = process.env.MORALIS_API_KEY;
 
 async function getTokenMetadata(mint) {
+      console.log(
+        "Calling metadata API:",
+        mint
+    );
     try {
         const response = await axios.get(
     `https://solana-gateway.moralis.io/token/mainnet/${mint}/metadata`,
@@ -46,7 +50,16 @@ async function getTokenMetadata(mint) {
 
         return response.data;
     } catch (err) {
-        return null;
+        console.error(
+    "Metadata error:",
+    mint,
+    err.message
+);
+
+return {
+    marketCap: 0,
+    fullyDilutedValue: 0
+};
     }
 }
 
@@ -115,8 +128,10 @@ if (ageMinutes > 60) {
     mint
 );
 
-const tokenData =
-    await getTokenMetadata(mint);
+const tokenData = {
+    marketCap: 0,
+    fullyDilutedValue: 0
+};
 
 console.log(
     "Metadata received:",
