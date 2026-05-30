@@ -22,13 +22,14 @@ const API_KEY = process.env.MORALIS_API_KEY;
 async function getTokenMetadata(mint) {
     try {
         const response = await axios.get(
-            `https://solana-gateway.moralis.io/token/mainnet/${mint}/metadata`,
-            {
-                headers: {
-                    "X-API-Key": API_KEY
-                }
-            }
-        );
+    `https://solana-gateway.moralis.io/token/mainnet/${mint}/metadata`,
+    {
+        headers: {
+            "X-API-Key": API_KEY
+        },
+        timeout: 10000
+    }
+);
 
         return response.data;
     } catch (err) {
@@ -40,13 +41,14 @@ async function getGraduatedCoins() {
     try {
 
         const response = await axios.get(
-            "https://solana-gateway.moralis.io/token/mainnet/exchange/pumpfun/graduated",
-            {
-                headers: {
-                    "X-API-Key": API_KEY
-                }
-            }
-        );
+    "https://solana-gateway.moralis.io/token/mainnet/exchange/pumpfun/graduated",
+    {
+        headers: {
+            "X-API-Key": API_KEY
+        },
+        timeout: 10000
+    }
+);
 
         return response.data.result || [];
 
@@ -148,8 +150,14 @@ console.log("Monitoring graduations...");
 
 processCoins();
 
-
 setInterval(
     processCoins,
     150000
 );
+
+setInterval(() => {
+    console.log(
+        "HEARTBEAT",
+        new Date().toLocaleTimeString()
+    );
+}, 60000);
