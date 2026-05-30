@@ -1,3 +1,16 @@
+process.on("uncaughtException", (err) => {
+    console.error(
+        "UNCAUGHT EXCEPTION:",
+        err
+    );
+});
+
+process.on("unhandledRejection", (err) => {
+    console.error(
+        "UNHANDLED REJECTION:",
+        err
+    );
+});
 const express = require("express");
 
 const app = express();
@@ -97,7 +110,18 @@ if (ageMinutes > 60) {
 
                 }
 
-    const tokenData = await getTokenMetadata(mint);
+    console.log(
+    "Getting metadata:",
+    mint
+);
+
+const tokenData =
+    await getTokenMetadata(mint);
+
+console.log(
+    "Metadata received:",
+    mint
+);
 
 
                 db.run(
@@ -138,7 +162,15 @@ ${coin.graduatedAt}
 `;
 
 console.log("Sending Telegram alert...");                
+console.log(
+    "Sending Telegram..."
+);
+
 await sendAlert(msg);
+
+console.log(
+    "Telegram sent"
+);
 
                 console.log(
                     "Alert sent:",
