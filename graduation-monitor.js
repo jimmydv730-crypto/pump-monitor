@@ -110,11 +110,12 @@ if (ageMinutes > 60) {
     continue;
 }
             
-
+console.log("Before db.get:", mint);
         db.get(
             "SELECT mint FROM coins WHERE mint = ?",
             [mint],
             async (err, row) => {
+                console.log("DB callback reached:", mint);
 
                 if (row) {
                   
