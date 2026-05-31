@@ -212,12 +212,20 @@ async function loop() {
         );
     }
 
-    console.log("Scheduling next loop");
+    const nextRun = Date.now() + 150000;
 
-    setTimeout(
-        loop,
-        150000
-    );
+console.log(
+    "Next loop scheduled for:",
+    new Date(nextRun).toLocaleTimeString()
+);
+
+setTimeout(() => {
+
+    console.log("TIMEOUT FIRED");
+
+    loop();
+
+}, 150000);
 }
 
 loop();
@@ -228,3 +236,10 @@ setInterval(() => {
         new Date().toLocaleTimeString()
     );
 }, 60000);
+
+setInterval(() => {
+    console.log(
+        "WATCHDOG",
+        process.uptime()
+    );
+}, 30000);
