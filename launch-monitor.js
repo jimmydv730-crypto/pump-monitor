@@ -189,12 +189,14 @@ const buyerCount =
     buyers.get(trade.mint)?.size || 0;
 
 console.log(
+    "MC:",
+    trade.marketCapSol,
     "BUYERS:",
     buyerCount
 );
        if (
-    trade.marketCapSol >= 60 &&
-    buyerCount >= 20 &&
+    trade.marketCapSol >= 35 &&
+    buyerCount >= 3 &&
     !alertedTokens.has(trade.mint)
 ) {
      console.log("INSIDE ALERT BLOCK");
