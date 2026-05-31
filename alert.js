@@ -11,15 +11,25 @@ async function sendAlert(message) {
     try {
         await bot.sendMessage(
             process.env.CHAT_ID,
-            message
+            message,
+            {
+              parse_mode: "Markdown"
+            }
         );
         await bot.sendMessage(
             process.env.FRIEND_CHAT_ID,
-            message
+            message,
+            {
+              parse_mode: "Markdown"
+            }
+            
         );
         await bot.sendMessage(
             process.env.MADHU_CHAT_ID,
-            message
+            message,
+            {
+              parse_mode: "Markdown"
+            }
         );
     } catch (err) {
         console.error(err);
