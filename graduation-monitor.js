@@ -27,7 +27,7 @@ app.listen(PORT, () => {
 require("dotenv").config();
 
 const axios = require("axios");
-const db = require("./db");
+const { db, dbGet } = require("./db");
 const sendAlert = require("./alert");
 
 const API_KEY = process.env.MORALIS_API_KEY;
@@ -113,89 +113,31 @@ console.log("END getGraduatedCoins");
         }
             
         console.log("Before db.get:", mint);
-        db.get(
-            "SELECT mint FROM coins WHERE mint = ?",
-            [mint],
-            async (err, row) => {
-                console.log("DB callback reached:", mint);
+        const row = await dbGet(
+    "SELECT mint FROM coins WHERE mint = ?",
+    [mint]
+);
 
-                if (row) {
-                  
-    
-    return;
-
-                }
-
+if (row) {
     console.log(
+        "Already exists:",
+        mint
+    );
+    continue;
+}
+
+console.log(
     "Getting metadata:",
     mint
 );
 
-const tokenData = {
-    marketCap: 0,
-    fullyDilutedValue: 0
-};
+const tokenData =
+    await getTokenMetadata(mint);
 
 console.log(
     "Metadata received:",
     mint
 );
-
-
-                db.run(
-                    `INSERT INTO coins (mint, creator, status)
-                     VALUES (?, ?, ?)`,
-                    [
-                        mint,
-                        "UNKNOWN",
-                        "GRADUATED"
-                    ]
-                );
-
-                const msg = `
-🎓 NEW PUMP.FUN GRADUATION
-
-🪙 Name: ${coin.name}
-🏷 Symbol: ${coin.symbol}
-
-📍 Mint:
-${coin.tokenAddress}
-
-💰 Market Cap:
-$${Number(tokenData?.marketCap || 0).toLocaleString()}
-
-💰 FDV:
-$${Number(tokenData?.fullyDilutedValue || 0).toLocaleString()}
-
-💵 Price:
-$${Number(coin.priceUsd).toFixed(8)}
-
-💧 Liquidity:
-$${Number(coin.liquidity).toFixed(2)}
-
-
-
-⏰ Graduated:
-${coin.graduatedAt}
-`;
-
-console.log("Sending Telegram alert...");                
-console.log(
-    "Sending Telegram..."
-);
-
-await sendAlert(msg);
-
-console.log(
-    "Telegram sent"
-);
-
-                console.log(
-                    "Alert sent:",
-                    coin.symbol
-                );
-            }
-        );
     }
     console.log("END processCoins");
 }
