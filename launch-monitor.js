@@ -31,11 +31,16 @@ tradeWs.on("open", () => {
     console.log("Trade websocket connected");
 });
 
-ws.on("open", () => {
+ws.on("open", async () => {
 
     console.log(
         "Connected to PumpPortal"
     );
+
+    await sendAlert(
+        "LAUNCH BOT TEST"
+    );
+
     ws.send(
         JSON.stringify({
             method: "subscribeNewToken"
@@ -195,8 +200,8 @@ console.log(
     buyerCount
 );
        if (
-    trade.marketCapSol >= 35 &&
-    buyerCount >= 3 &&
+    trade.marketCapSol >= 100 &&
+    buyerCount >= 30 &&
     !alertedTokens.has(trade.mint)
 ) {
      console.log("INSIDE ALERT BLOCK");
