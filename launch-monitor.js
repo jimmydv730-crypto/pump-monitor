@@ -1,3 +1,13 @@
+const express = require("express");
+const app = express();
+
+app.get("/", (req, res) => {
+    res.send("Launch monitor running");
+});
+
+app.listen(process.env.PORT || 3000, () => {
+    console.log("Health server started");
+});
 const trackedTokens = new Map();
 const alertedTokens = new Set();
 const buyers = new Map();
