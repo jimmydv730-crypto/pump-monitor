@@ -17,6 +17,10 @@ async function sendAlert(message) {
             process.env.FRIEND_CHAT_ID,
             message
         );
+        await bot.sendMessage(
+            process.env.MADHU_CHAT_ID,
+            message
+        );
     } catch (err) {
         console.error(err);
     }
