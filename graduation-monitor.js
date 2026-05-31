@@ -92,11 +92,13 @@ async function processCoins() {
 );
 
     const coins = await getGraduatedCoins();
+    
 
 console.log("END getGraduatedCoins");
     console.log("Coins returned:", coins.length);
+    const recentCoins = coins.slice(0, 10);
 
-    for (const coin of coins) {
+    for (const coin of recentCoins)  {
       
 
         const mint = coin.tokenAddress;
