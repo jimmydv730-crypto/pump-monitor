@@ -103,16 +103,16 @@ console.log("END getGraduatedCoins");
 
         const mint = coin.tokenAddress;
         const graduatedTime = new Date(coin.graduatedAt);
-const now = new Date();
+        const now = new Date();
 
-const ageMinutes =
-  (now - graduatedTime) / 60000;
+        const ageMinutes =
+        (now - graduatedTime) / 60000;
 
-if (ageMinutes > 60) {
-    continue;
-}
+        if (ageMinutes > 60) {
+            continue;
+        }
             
-console.log("Before db.get:", mint);
+        console.log("Before db.get:", mint);
         db.get(
             "SELECT mint FROM coins WHERE mint = ?",
             [mint],
@@ -197,6 +197,7 @@ console.log(
             }
         );
     }
+    console.log("END processCoins");
 }
 
 console.log("Monitoring graduations...");
