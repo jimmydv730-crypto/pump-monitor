@@ -1,16 +1,3 @@
-process.on("uncaughtException", (err) => {
-    console.error(
-        "UNCAUGHT EXCEPTION:",
-        err
-    );
-});
-
-process.on("unhandledRejection", (err) => {
-    console.error(
-        "UNHANDLED REJECTION:",
-        err
-    );
-});
 const express = require("express");
 
 const app = express();
@@ -44,7 +31,7 @@ async function getTokenMetadata(mint) {
         headers: {
             "X-API-Key": API_KEY
         },
-        timeout: 10000
+        timeout: 30000
     }
 );
 
@@ -72,7 +59,7 @@ async function getGraduatedCoins() {
         headers: {
             "X-API-Key": API_KEY
         },
-        timeout: 10000
+        timeout: 30000
     }
 );
 
@@ -85,16 +72,12 @@ async function getGraduatedCoins() {
 }
 
 async function processCoins() {
-    console.log("START processCoins");
   console.log(
     "Checking graduations:",
     new Date().toLocaleTimeString()
 );
 
     const coins = await getGraduatedCoins();
-    
-
-console.log("END getGraduatedCoins");
     console.log("Coins returned:", coins.length);
     const recentCoins = coins.slice(0, 10);
 
@@ -111,33 +94,16 @@ console.log("END getGraduatedCoins");
         if (ageMinutes > 60) {
             continue;
         }
-            
-        console.log("Before db.get:", mint);
         const row = await dbGet(
     "SELECT mint FROM coins WHERE mint = ?",
     [mint]
 );
 
 if (row) {
-    console.log(
-        "Already exists:",
-        mint
-    );
     continue;
 }
-
-console.log(
-    "Getting metadata:",
-    mint
-);
-
 const tokenData =
     await getTokenMetadata(mint);
-
-console.log(
-    "Metadata received:",
-    mint
-);
 await new Promise((resolve, reject) => {
     db.run(
         `INSERT INTO coins (mint, creator, status)
@@ -178,19 +144,12 @@ $${Number(coin.liquidity).toFixed(2)}
 ⏰ Graduated:
 ${coin.graduatedAt}
 `;
-
-console.log("Sending Telegram...");
-
 await sendAlert(msg);
-
-console.log("Telegram sent");
-
 console.log(
     "Alert sent:",
     coin.symbol
 );
     }
-    console.log("END processCoins");
 }
 
 console.log("Monitoring graduations...");
@@ -209,11 +168,6 @@ async function runMonitor() {
     isRunning = true;
 
     try {
-
-        console.log(
-            "INTERVAL FIRED"
-        );
-
         await processCoins();
 
     } catch (err) {
@@ -236,17 +190,9 @@ setInterval(
     runMonitor,
     150000
 );
-
 setInterval(() => {
     console.log(
         "HEARTBEAT",
         new Date().toLocaleTimeString()
     );
 }, 60000);
-
-setInterval(() => {
-    console.log(
-        "WATCHDOG",
-        process.uptime()
-    );
-}, 30000);
