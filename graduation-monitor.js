@@ -195,40 +195,47 @@ console.log(
 
 console.log("Monitoring graduations...");
 
-async function loop() {
+let isRunning = false;
 
-    console.log("LOOP START");
+async function runMonitor() {
+
+    if (isRunning) {
+        console.log(
+            "Previous run still active"
+        );
+        return;
+    }
+
+    isRunning = true;
 
     try {
-        await processCoins();
 
-        console.log("processCoins finished");
+        console.log(
+            "INTERVAL FIRED"
+        );
+
+        await processCoins();
 
     } catch (err) {
 
         console.error(
-            "Loop error:",
+            "Monitor error:",
             err
         );
+
+    } finally {
+
+        isRunning = false;
+
     }
-
-    const nextRun = Date.now() + 150000;
-
-console.log(
-    "Next loop scheduled for:",
-    new Date(nextRun).toLocaleTimeString()
-);
-
-setTimeout(() => {
-
-    console.log("TIMEOUT FIRED");
-
-    loop();
-
-}, 150000);
 }
 
-loop();
+runMonitor();
+
+setInterval(
+    runMonitor,
+    150000
+);
 
 setInterval(() => {
     console.log(
