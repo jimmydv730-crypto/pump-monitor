@@ -204,14 +204,22 @@ console.log("Monitoring graduations...");
 
 async function loop() {
 
+    console.log("LOOP START");
+
     try {
         await processCoins();
+
+        console.log("processCoins finished");
+
     } catch (err) {
+
         console.error(
             "Loop error:",
             err
         );
     }
+
+    console.log("Scheduling next loop");
 
     setTimeout(
         loop,
