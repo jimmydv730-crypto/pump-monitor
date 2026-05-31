@@ -138,6 +138,57 @@ console.log(
     "Metadata received:",
     mint
 );
+await new Promise((resolve, reject) => {
+    db.run(
+        `INSERT INTO coins (mint, creator, status)
+         VALUES (?, ?, ?)`,
+        [
+            mint,
+            "UNKNOWN",
+            "GRADUATED"
+        ],
+        (err) => {
+            if (err) reject(err);
+            else resolve();
+        }
+    );
+});
+
+const msg = `
+🎓 NEW PUMP.FUN GRADUATION
+
+🪙 Name: ${coin.name}
+🏷 Symbol: ${coin.symbol}
+
+📍 Mint:
+${coin.tokenAddress}
+
+💰 Market Cap:
+$${Number(tokenData?.marketCap || 0).toLocaleString()}
+
+💰 FDV:
+$${Number(tokenData?.fullyDilutedValue || 0).toLocaleString()}
+
+💵 Price:
+$${Number(coin.priceUsd).toFixed(8)}
+
+💧 Liquidity:
+$${Number(coin.liquidity).toFixed(2)}
+
+⏰ Graduated:
+${coin.graduatedAt}
+`;
+
+console.log("Sending Telegram...");
+
+await sendAlert(msg);
+
+console.log("Telegram sent");
+
+console.log(
+    "Alert sent:",
+    coin.symbol
+);
     }
     console.log("END processCoins");
 }
