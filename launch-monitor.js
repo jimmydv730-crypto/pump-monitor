@@ -29,6 +29,14 @@ const tradeWs = new WebSocket(
 );
 tradeWs.on("open", () => {
     console.log("Trade websocket connected");
+     tradeWs.send(
+        JSON.stringify({
+            method: "subscribeTokenTrade",
+            keys: [
+                "35yWb8uY6jQMn4iUUjBeAoPNy8g5C7af4k33pZfnpump"
+            ]
+        })
+    );
 });
 
 ws.on("open", async () => {
@@ -165,6 +173,10 @@ ws.on("close", (code, reason) => {
     );
 });
 tradeWs.on("message", async (data) => {
+    console.log(
+    "TRADE MSG:",
+    data.toString()
+);
 
     try {
 
