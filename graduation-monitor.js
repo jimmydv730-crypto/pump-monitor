@@ -123,11 +123,17 @@ await new Promise((resolve, reject) => {
 const msg = `
 🎓 NEW PUMP.FUN GRADUATION
 
-🪙 Name: ${coin.name}
-🏷 Symbol: ${coin.symbol}
+🪙 Name:
+\`${coin.name}\`
+
+🏷 Symbol:
+\`${coin.symbol}\`
 
 📍 Mint:
-${coin.tokenAddress}
+\`${coin.tokenAddress}\`
+
+👤 Creator:
+\`UNKNOWN\`
 
 💰 Market Cap:
 $${Number(tokenData?.marketCap || 0).toLocaleString()}
@@ -143,6 +149,8 @@ $${Number(coin.liquidity).toFixed(2)}
 
 ⏰ Graduated:
 ${coin.graduatedAt}
+
+🔗 https://pump.fun/coin/${coin.tokenAddress}
 `;
 await sendAlert(msg);
 console.log(
