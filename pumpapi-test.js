@@ -18,42 +18,43 @@ app.listen(PORT, () => {
 
 const seen = new Set();
 
-
 console.log("Monitoring graduations via PumpAPI...");
 
-const ws = new WebSocket(
-    "wss://stream.pumpapi.io/"
-);
+function connectWS() {
 
-ws.on("open", () => {
-
-    console.log(
-        "Connected to PumpAPI"
+    const ws = new WebSocket(
+        "wss://stream.pumpapi.io/"
     );
 
-});
+    ws.on("open", () => {
 
-ws.on("message", async (data) => {
+        console.log(
+            "Connected to PumpAPI"
+        );
 
-    try {
+    });
 
-        const event =
-            JSON.parse(data);
+    ws.on("message", async (data) => {
 
-        if (
-            event.pool !== "pump" ||
-            event.tokensInPool !== 0
-        ) {
-            return;
-        }
+        try {
 
-        if (seen.has(event.mint)) {
-            return;
-        }
+            const event =
+                JSON.parse(data);
 
-        seen.add(event.mint);
+            if (
+                event.pool !== "pump" ||
+                event.tokensInPool !== 0
+            ) {
+                return;
+            }
 
-        const msg = `
+            if (seen.has(event.mint)) {
+                return;
+            }
+
+            seen.add(event.mint);
+
+            const msg = `
 🎓 NEW PUMP.FUN GRADUATION
 
 🪙 Name:
@@ -80,55 +81,68 @@ ${new Date(event.timestamp).toISOString()}
 🔗 https://pump.fun/coin/${event.mint}
 `;
 
-console.log(
-    "Graduation detected:",
-    event.symbol,
-    event.mint
-);
-        await sendAlert(msg);
+            console.log(
+                "Graduation detected:",
+                event.symbol,
+                event.mint
+            );
 
+            await sendAlert(msg);
 
+            console.log(
+                "Alert sent:",
+                event.symbol
+            );
+
+        } catch (err) {
+
+            console.error(
+                "PumpAPI error:",
+                err
+            );
+
+        }
+
+    });
+
+    ws.on("close", (code, reason) => {
 
         console.log(
-            "Graduated:",
-            event.symbol
+            `WebSocket closed. Code: ${code}`
         );
 
-    } catch (err) {
+        console.log(
+            `Reason: ${reason.toString()}`
+        );
+
+        console.log(
+            "Reconnecting in 5 seconds..."
+        );
+
+        setTimeout(() => {
+            connectWS();
+        }, 5000);
+
+    });
+
+    ws.on("error", (err) => {
 
         console.error(
-            "PumpAPI error:",
-            err
+            "WebSocket error:",
+            err.message
         );
 
-    }
+    });
 
-});
+}
 
-ws.on("close", () => {
-
-    console.log(
-        "WebSocket closed - restarting"
-    );
-
-    setTimeout(() => {
-        process.exit(1);
-    }, 5000);
-
-});
-
-ws.on("error", (err) => {
-
-    console.error(
-        "WebSocket error:",
-        err.message
-    );
-
-});
+connectWS();
 
 setInterval(() => {
+
     console.log(
         "HEARTBEAT",
         new Date().toLocaleTimeString()
     );
+
 }, 60000);
